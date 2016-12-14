@@ -1,5 +1,5 @@
 /**
- * d3-proto - /grid
+ * d3-grid - /grid
  *
  * Created by nijk on 13/09/2016.
  */
@@ -10,11 +10,8 @@ import * as d3 from 'd3';
 import _ from 'lodash';
 import classnames from 'classnames';
 
-import random from '../core/random';
-import makeGrid from '../core/calculateGrid';
-
-// Styles
-import './grid.scss';
+import random from './random';
+import calculateGrid from './calculateGrid';
 
 // CSS Classes
 const setClasses = ({ scale, ...rest }) => {
@@ -104,7 +101,7 @@ const gridSvg = (opts) => {
   el.svg = d3.select('body').append('svg');
   el.g = el.svg.append('g');
 
-  opts = makeGrid(opts);
+  opts = calculateGrid(opts);
 
   opts.data = _.range(0, opts.cells, 0);
 

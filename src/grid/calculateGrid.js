@@ -13,8 +13,23 @@ let defaults = {
 };
 
 const setSize = ({ width, height, scale, ...rest }, $el) => {
-  width = (scale || width > $el.clientWidth) ? $el.clientWidth : width || widthFallback;
-  height = (scale || height > $el.clientHeight) ? $el.clientHeight : height || heightFallback;
+  const computedStyle = getComputedStyle($el);
+
+  const padding = {
+    x: parseFloat(computedStyle.paddingLeft) + parseFloat(computedStyle.paddingRight),
+    y: parseFloat(computedStyle.paddingTop) + parseFloat(computedStyle.paddingBottom)
+  };
+
+  let elWidth, elHeight;
+
+  elWidth = $el.clientWidth;
+  elHeight = $el.clientHeight;
+
+  elWidth -= padding.x;
+  elHeight -= padding.y;
+
+  width = (scale || width > elWidth) ? elWidth : width || widthFallback;
+  height = (scale || height > elHeight) ? elHeight : height || heightFallback;
 
   return _.merge({}, { width, height, scale }, rest);
 };

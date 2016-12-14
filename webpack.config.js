@@ -3,7 +3,7 @@ const autoprefixer = require('autoprefixer');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const path = require('path');
-const srcPath = path.join(__dirname, 'src');
+const srcPath = path.join(__dirname, 'src/example');
 const distPath = path.join(__dirname, 'dist');
 
 const sassLoaders = [
@@ -20,7 +20,7 @@ module.exports = {
     /*devtool: 'eval',*/
     entry: {
         app: path.join(srcPath, 'index.js'),
-        common: ['d3',/* 'react', 'react-dom', 'lodash', 'keymirror',*/ 'classnames']
+        common: ['d3','lodash', 'classnames']
     },
     resolve: {
         root: srcPath,
@@ -57,7 +57,7 @@ module.exports = {
         new webpack.optimize.CommonsChunkPlugin('common', 'bundle.js'),
         new HtmlWebpackPlugin({
             inject: true,
-            template: 'src/index.html'
+            template: path.join(srcPath, 'index.html')
         }),
         new webpack.NoErrorsPlugin()
     ],

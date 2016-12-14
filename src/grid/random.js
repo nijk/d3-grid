@@ -1,5 +1,5 @@
 /**
- * d3-proto - /random
+ * d3-grid - /random
  *
  * Created by nijk on 14/09/2016.
  */

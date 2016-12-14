@@ -1,0 +1,23 @@
+.vis {
+  min-height: 30vh;
+}
+
+.vis__examples {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.vis__grid {
+  //width: 50%;
+  width: 43.75%;
+  margin-top: 2.5%;
+  padding: 2.5%;
+  background-color: rgba(255, 255, 255, .05);
+}
+
+.vis__max {
+  max-width: 100%;
+  max-height: 100%;
+}

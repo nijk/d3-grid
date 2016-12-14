@@ -1,5 +1,5 @@
 {
-  "name": "d3-proto",
+  "name": "d3-grid",
   "version": "0.0.1",
   "private": true,
   "main": "index.js",
@@ -10,12 +10,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nijk/d3-proto.git"
+    "url": "git+https://github.com/nijk/d3-grid.git"
   },
   "author": "Nick Aspinall",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/nijk/d3-proto/issues"
+    "url": "https://github.com/nijk/d3-grid/issues"
   },
   "dependencies": {
     "classnames": "^2.2.5",

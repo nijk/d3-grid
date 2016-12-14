@@ -1,5 +1,5 @@
 /**
- * d3-proto - /grid
+ * d3-grid - /grid
  *
  * Created by nijk on 13/09/2016.
  */
@@ -10,17 +10,16 @@ import * as d3 from 'd3';
 import _ from 'lodash';
 import classnames from 'classnames';
 
-import random from '../core/random';
-import calculateGrid from '../core/calculateGrid';
-
-// Styles
-import './grid.scss';
+import random from './random';
+import calculateGrid from './calculateGrid';
 
 // CSS Classes
 const setClasses = ({ scale, ...rest }) => {
-  let classes = { el: {}, grid: {} };
-  classes.el['vis__max'] = !!scale;
-  classes.grid['vis__grid'] = true;
+  let classes = {
+    canvas: {
+      'vis__max': !!scale,
+    }
+  };
 
   return _.merge({ scale, classes }, rest);
 };
@@ -93,7 +92,7 @@ const build = ($canvas, opts) => {
 
   let $grid;
 
-  $canvas.attr('class', classnames(classes.el))
+  $canvas.attr('class', classnames(classes.canvas))
     .attr('width', width)
     .attr('height', height);
 
