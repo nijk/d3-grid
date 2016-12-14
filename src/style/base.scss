@@ -1,0 +1,26 @@
+html {
+    height: 100%;
+}
+
+body {
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    color: $color-white;
+    background-color: $bg-gray;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 0;
+    padding-bottom: 20px;
+    color: $color-white;
+}
+
+.wrapper {
+  padding: 20px;
+}

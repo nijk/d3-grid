@@ -1,0 +1,9 @@
+# IDE
+.idea
+
+# Distribution
+dist/*
+
+# Node & NPM
+node_modules
+npm-debug.log
