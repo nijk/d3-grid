@@ -19,7 +19,6 @@ const scale = true;
 
 // HTML5 Canvas Squares
 const canvasSquares = new GridCanvas({
-  type: 'canvas',
   selector: '.vis__canvas--squares',
   cells,
   cellSize: [6,6,2],
@@ -29,14 +28,6 @@ const canvasSquares = new GridCanvas({
 
 // HTML5 Canvas Circles
 const canvasCircles = new GridCanvas({
-  /*width: 540,
-  height: 450,*/
-  /*classes: {
-    canvas: {
-      'vis__grid': false,
-    },
-  },*/
-  type: 'canvas',
   selector: '.vis__canvas--circles',
   cells,
   cellSize: [6,6,2],
@@ -46,7 +37,6 @@ const canvasCircles = new GridCanvas({
 
 // Svg Squares
 const svgSquares = new GridSvg({
-  type: 'svg',
   selector: '.vis__svg--squares',
   cells,
   cellSize: [6,6,2],
@@ -56,7 +46,6 @@ const svgSquares = new GridSvg({
 
 // Svg Circles
 const svgCircles = new GridSvg({
-  type: 'svg',
   selector: '.vis__svg--circles',
   cells,
   cellSize: [6,6,2],

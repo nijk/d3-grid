@@ -3,7 +3,7 @@ const autoprefixer = require('autoprefixer');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const path = require('path');
-const srcPath = path.join(__dirname, 'src/example');
+const srcPath = path.join(__dirname, 'example');
 const distPath = path.join(__dirname, 'dist');
 
 const sassLoaders = [

@@ -30,6 +30,10 @@ export default class CalculateGrid {
     return this;
   }
 
+  /**
+   * Set Size props
+   * @returns {CalculateGrid}
+   */
   setSize () {
     const computedStyle = this.window.getComputedStyle(this.$el);
     const padding = {
@@ -52,6 +56,10 @@ export default class CalculateGrid {
     return this.setOpts({ width, height, scale });
   }
 
+  /**
+   * Set Grid props
+   * @returns {CalculateGrid}
+   */
   setGrid () {
     let { cells, width, height, grid, cellSize } = this.opts;
     let side, cols, rows;
@@ -70,16 +78,26 @@ export default class CalculateGrid {
     return this.setOpts({ cells, width, height, grid, cellSize });
   }
 
+  /**
+   * Set Cell props
+   * @returns {CalculateGrid}
+   */
   setCell () {
-    let { width, height, grid, cellSize } = this.opts;
-    let cellWidth = Math.floor((width / grid[0]) * 0.9);
-    let cellHeight = Math.floor((height / grid[1]) * 0.9);
-    let cellGutter = Math.ceil(cellWidth * 0.1);
+    let { cells, width, height, grid, cellSize } = this.opts;
+    const cellWidth = Math.floor((width / grid[0]) * 0.9);
+    const cellHeight = Math.floor((height / grid[1]) * 0.9);
+    const cellGutter = Math.ceil(cellWidth * 0.1);
     cellSize = [cellWidth, cellHeight, cellGutter];
 
     return this.setOpts({ cells, width, height, grid, cellSize });
   }
-  
+
+  /**
+   * Calculate all props
+   * @param $el
+   * @param opts
+   * @returns {*}
+   */
   calculate ($el, opts) {
     // Set properties
     this.$el = $el;
@@ -98,7 +116,9 @@ export default class CalculateGrid {
       this.setCell();
     }
 
-    this.opts.data = _.range(0, this.opts.cells, 0);
+    this.setOpts({
+      data: _.range(0, this.opts.cells, 0),
+    });
 
     return this.opts;
   }
