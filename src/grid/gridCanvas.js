@@ -1,5 +1,5 @@
 /**
- * d3-grid - /grid
+ * d3-grid - GridCanvas
  *
  * Created by nijk on 13/09/2016.
  */
@@ -7,115 +7,112 @@
 'use strict';
 
 import * as d3 from 'd3';
-import _ from 'lodash';
 import classnames from 'classnames';
 
 import random from './random';
-import calculateGrid from './calculateGrid';
+import Grid from './grid';
 
-// CSS Classes
-const setClasses = ({ scale, ...rest }) => {
-  let classes = {
-    canvas: {
-      'vis__max': !!scale,
+// GridCanvas
+export default class GridCanvas extends Grid {
+  /**
+   * DOM elements
+   * @returns {GridCanvas}
+   */
+  setDOM () {
+    const selector = this.opts.selector || 'body';
+    this.$parent = document.querySelector(selector);
+    this.$grid = d3.select(selector).append('canvas');
+
+    return this;
+  }
+
+  /**
+   * HTML5 Canvas Context from D3 selection
+   * @param elem
+   * @returns {*|CanvasRenderingContext2D}
+   */
+  getContext (elem) {
+    return elem.node().getContext('2d');
+  }
+
+  /**
+   * Build the Grid
+   * @returns {GridCanvas}
+   * @private
+   */
+  _buildGrid () {
+    const { width, height, classes } = this.opts;
+    const context = this.getContext(this.$grid);
+    console.info('build', this.opts);
+
+    this.$grid
+      .attr('class', classnames(classes.grid))
+      .attr('width', width)
+      .attr('height', height);
+
+    context.clearRect(0, 0, width, height);
+
+    return this;
+  }
+
+  /**
+   * Build the container and the cells for each square/circle
+   * @returns {GridCanvas}
+   * @private
+   */
+  _buildContainer () {
+    const { data, cellSize } = this.opts;
+    this.$container = d3.select(document.createElement('grid'));
+
+    this.$container.selectAll('grid')
+      .data(data)
+      .enter()
+      .append('cell')
+      .attr('x', this.calculateCellX.bind(this, this.cellOffset.x))
+      .attr('y', this.calculateCellY.bind(this, this.cellOffset.y))
+      .attr('width', cellSize[0])
+      .attr('height', cellSize[1])
+      .attr('fillStyle', random.colour);
+
+    return this;
+  }
+
+  /**
+   * Build the squares/circles
+   * @returns {GridCanvas}
+   * @private
+   */
+  _buildContents () {
+    const context = this.getContext(this.$grid);
+    const { shape, cellSize } = this.opts;
+
+    switch (shape) {
+      case 'circle':
+        const endAngle = 2 * Math.PI;
+        const radius = cellSize[0] / 2;
+
+        this.$container.selectAll('cell').each((_d, i, nodes) => {
+          const node = d3.select(nodes[i]);
+
+          context.beginPath();
+          context.fillStyle = node.attr('fillStyle');
+          context.arc(node.attr('x'), node.attr('y'), radius, 0, endAngle);
+          context.fill();
+          context.closePath();
+        });
+        break;
+      default:
+        this.$container.selectAll('cell').each((_d, i, nodes) => {
+          const node = d3.select(nodes[i]);
+
+          context.beginPath();
+          context.fillStyle = node.attr('fillStyle');
+          context.fillRect(node.attr('x'), node.attr('y'), cellSize[0], cellSize[1]);
+          context.closePath();
+        });
+        break;
     }
-  };
 
-  return _.merge({ scale, classes }, rest);
-};
-
-const buildCells = ($grid, context, opts) => {
-  const { shape } = opts;
-
-  switch (shape) {
-    case 'circle':
-      const endAngle = 2 * Math.PI;
-      const radius = opts.cellSize[0] / 2;
-
-      $grid.selectAll('cell').each((_d, i, nodes) => {
-        const node = d3.select(nodes[i]);
-
-        context.beginPath();
-        context.fillStyle = node.attr('fillStyle');
-        context.arc(node.attr('x'), node.attr('y'), radius, 0, endAngle);
-        context.fill();
-        context.closePath();
-      });
-      break;
-    default:
-      $grid.selectAll('cell').each((_d, i, nodes) => {
-        const node = d3.select(nodes[i]);
-
-        context.beginPath();
-        context.fillStyle = node.attr('fillStyle');
-        context.fillRect(node.attr('x'), node.attr('y'), opts.cellSize[0], opts.cellSize[0]);
-        context.closePath();
-      });
-      break;
+    return this;
   }
-};
-
-const buildGrid = ({ shape, data, cellSize, grid }) => {
-  const cols = grid[0];
-  const $grid = d3.select(document.createElement('grid'));
-
-  let offsetX = 0;
-  let offsetY = 0;
-
-  if (shape === 'circle') {
-    offsetX = Math.ceil((cellSize[0] + cellSize[2]) / 2);
-    offsetY = Math.ceil((cellSize[1] + cellSize[2]) / 2);
-  }
-
-
-  $grid.selectAll('grid')
-   .data(data)
-   .enter()
-   .append('cell')
-   .attr('x', (_d, i) => {
-     const item = i + 1;
-     const col = (item > grid[0]) ? item - (grid[0] * (Math.ceil(item / cols - 1))) : item;
-     return ((cellSize[0] + cellSize[2]) * (col - 1)) + offsetX;
-   })
-   .attr('y', (_d, i) => ((cellSize[1] + cellSize[2]) * (Math.ceil((i + 1) / cols) - 1)) + offsetY)
-   .attr('width', cellSize[0])
-   .attr('height', cellSize[1])
-   .attr('fillStyle', random.colour);
-
-  return $grid;
-};
-
-// Grid builder
-const build = ($canvas, opts) => {
-  const { width, height, classes } = opts;
-  const context = $canvas.node().getContext('2d');
-
-  let $grid;
-
-  $canvas.attr('class', classnames(classes.canvas))
-    .attr('width', width)
-    .attr('height', height);
-
-  context.clearRect(0, 0, $canvas.attr('width'), $canvas.attr('height'));
-
-  $grid = buildGrid(opts);
-  buildCells($grid, context, opts);
-
-};
-
-const gridCanvas = (opts) => {
-  // Basic elements
-  const selector = opts.selector || 'body';
-  const $el = document.querySelector(selector);
-  const $canvas = d3.select(selector).append('canvas');
-
-  // Ensure grid options are complete
-  opts = calculateGrid(opts, $el);
-
-  // Set data and classes
-  opts = setClasses(opts);
-
-  build($canvas, opts);
-};
-
-export default gridCanvas;
+}

@@ -1,5 +1,5 @@
 /**
- * d3-grid - /grid
+ * d3-grid - GridSvg
  *
  * Created by nijk on 13/09/2016.
  */
@@ -7,109 +7,96 @@
 'use strict';
 
 import * as d3 from 'd3';
-import _ from 'lodash';
 import classnames from 'classnames';
 
 import random from './random';
-import calculateGrid from './calculateGrid';
+import Grid from './grid';
 
-// CSS Classes
-const setClasses = ({ scale, ...rest }) => {
-  let classes = { svg: {}, g: {} };
-  classes.svg['vix__max'] = !!scale;
-  classes.g['container'] = true;
+// GridSvg
+export default class GridSvg extends Grid {
+  /**
+   * DOM elements
+   * @returns {GridSvg}
+   */
+  setDOM () {
+    const selector = this.opts.selector || 'body';
+    this.$parent = document.querySelector(selector);
+    this.$grid = d3.select(selector).append('svg');
 
-  return _.merge({ scale, classes }, rest);
-};
-
-const buildSquares = (el, cols, rows, { data, width, height, cellSize }) => {
-  el.g.selectAll('rect')
-   .data(data)
-   .enter().append('rect')
-   .attr('x', (_d, i) => {
-   const item = i + 1;
-   const col = item > cols ? item - (cols * (Math.ceil(item / cols - 1))) : item;
-   return (cellSize[0] + cellSize[2]) * (col - 1);
-   })
-   .attr('y', (_d, i) => (cellSize[1] + cellSize[2]) * (Math.ceil((i + 1) / cols) - 1))
-   .attr('width', cellSize[0])
-   .attr('height', cellSize[1])
-   .style("fill", random.colour);
-};
-
-const buildCircles = (el, cols, rows, { data, cellSize }) => {
-  const items = data.length;
-  const spotCentre = (cellSize[1] + cellSize[2]) / 2;
-
-  const spotXPos = (_d, i) => {
-    const item = i + 1;
-    const col = item > cols ? item - (cols * (Math.ceil(item / cols - 1))) : item;
-    return ((cellSize[0] + cellSize[2]) / 2) * (col);
-  };
-
-  const spotYPos = (_d, i) => {
-    const item = i + 1;
-    const spotCentre = (cellSize[1] + cellSize[2]) / 2;
-    const rows = Math.ceil(items / cols);
-    const row = Math.ceil(item / rows);
-
-    console.log(`item ${item} of ${items} on row ${row} of ${rows - 1}`, `x: ${spotXPos(_d, i)} y: ${spotCentre * row} with radius ${spotRadius}`);
-
-    return spotCentre * row;
-  };
-
-  const spotRadius = ((cellSize[0] / 2) - (cellSize[2] / 2)) / 2;
-
-  el.g.selectAll('circle')
-    .data(data)
-    .enter().append('circle')
-    .attr('cx', spotXPos)
-    .attr('cy', spotYPos)
-    .attr('r', spotRadius)
-    .style("fill", random.colour);
-};
-
-// SVG builder
-const build = (el, { shape, data, width, height, grid, cellSize, classes }) => {
-  let cols = grid[0];
-  let rows = grid[1];
-
-  el.svg.attr('class', classnames(classes.svg))
-    .attr('width', width)
-    .attr('height', height)
-    .attr('viewBox', `0 0 ${width} ${height}`);
-
-  el.g.attr('class', classnames(classes.g))
-    .attr('width', width)
-    .attr('height', height);
-
-  switch (shape) {
-    case 'squares':
-      buildSquares(el, cols, rows, { data, width, height, grid, cellSize, classes });
-      break;
-    case 'circles':
-      buildCircles(el, cols, rows, { data, cellSize, classes });
-      break;
+    console.info('SVG setDOM', this.$grid);
+    
+    return this;
   }
 
-  console.log('data', data, data.length);
-};
+  /**
+   * HTML5 Canvas Context from D3 selection
+   * @param elem
+   * @returns {*|CanvasRenderingContext2D}
+   */
+  getContext (elem) {
+    return elem.node().getContext('2d');
+  }
 
-const gridSvg = (opts) => {
-  // Basic elements
-  let el = {};
-  el.svg = d3.select('body').append('svg');
-  el.g = el.svg.append('g');
+  /**
+   * Build the Grid
+   * @returns {GridSvg}
+   * @private
+   */
+  _buildGrid () {
+    const { width, height, classes } = this.opts;
 
-  opts = calculateGrid(opts);
+    this.$grid.attr('class', classnames(classes.grid))
+      .attr('width', width)
+      .attr('height', height)
+      .attr('viewBox', `0 0 ${width} ${height}`);
 
-  opts.data = _.range(0, opts.cells, 0);
+    return this;
+  }
 
-  opts = setClasses(opts);
+  /**
+   * Build the container and the cells for each square/circle
+   * @returns {GridSvg}
+   * @private
+   */
+  _buildContainer () {
+    const { width, height, classes } = this.opts;
 
-  console.log('build opts', opts);
+    this.$container = this.$grid.append('g');
 
-  build(el, opts);
-};
+    //this.$container = this.$grid.select('g');
 
-export default gridSvg;
+    this.$container.attr('class', classnames(classes.container))
+      .attr('width', width)
+      .attr('height', height);
+  }
+
+  /**
+   * Build the squares/circles
+   * @returns {GridSvg}
+   * @private
+   */
+  _buildContents () {
+    const { shape, data, cellSize } = this.opts;
+
+    switch (shape) {
+      case 'circle':
+        const endAngle = 2 * Math.PI;
+        const radius = cellSize[0] / 2;
+
+        // Make circles
+        break;
+      default:
+        this.$container.selectAll('rect')
+          .data(data)
+          .enter().append('rect')
+          .attr('x', this.calculateCellX.bind(this, this.cellOffset.x))
+          .attr('y', this.calculateCellY.bind(this, this.cellOffset.y))
+          .attr('width', cellSize[0])
+          .attr('height', cellSize[1])
+          .style("fill", random.colour);
+        break;
+    }
+
+    return this;
+  }
+}

@@ -12,14 +12,7 @@ import { gridCanvas, gridSvg } from "../grid/";
 import './scss/styles';
 
 // HTML5 Canvas Squares
-gridCanvas({
-  /*width: 540,
-  height: 450,*/
-  /*classes: {
-    canvas: {
-      'vis__grid': false,
-    },
-  },*/
+new gridCanvas({
   type: 'canvas',
   selector: '.vis__canvas--squares',
   cells: 2e3,
@@ -28,8 +21,8 @@ gridCanvas({
   scale: true
 });
 
-// HTML5 Canvas Squares
-gridCanvas({
+// HTML5 Canvas Circles
+new gridCanvas({
   /*width: 540,
   height: 450,*/
   /*classes: {
@@ -42,5 +35,22 @@ gridCanvas({
   cells: 2e3,
   cellSize: [6,6,2],
   shape: 'circle',
+  scale: true
+});
+
+// Svg Squares
+new gridSvg({
+  /*width: 540,
+  height: 450,*/
+  /*classes: {
+    canvas: {
+      'vis__grid': false,
+    },
+  },*/
+  type: 'svg',
+  selector: '.vis__svg--squares',
+  cells: 2e3,
+  cellSize: [6,6,2],
+  shape: 'square',
   scale: true
 });

@@ -79,8 +79,6 @@ const calculateGrid = (opts = {}, $el) => {
   
   opts.data = _.range(0, opts.cells, 0);
 
-  console.log('calculateGrid opts', opts);
-
   return opts;
 };
 
