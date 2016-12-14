@@ -7,7 +7,7 @@
 'use strict';
 
 import _ from 'lodash';
-import calculateGrid from './calculateGrid';
+import CalculateGrid from './calculateGrid';
 
 /**
  * Abstract class: Grid
@@ -24,12 +24,23 @@ export default class Grid {
       y: 0
     };
 
+    const calculateGrid = new CalculateGrid(window);
+
     // Calculate Grid, set appropriate classes and build the Canvas Grid
-    this.setDOM()
-      .setOpts(calculateGrid(this.opts, this.$parent))
+    return this.setDOM()
+      .setOpts(calculateGrid.calculate(this.$parent, this.opts))
       .setClasses()
       .calculateCellOffset()
       .build();
+  }
+
+  resize () {
+    this.setOpts(calculateGrid.calculate(this.$parent, this.opts))
+      .setClasses()
+      .calculateCellOffset()
+      .build();
+
+    return this;
   }
 
   /**
@@ -46,7 +57,7 @@ export default class Grid {
    * @returns {Grid}
    */
   setOpts (opts) {
-    this.opts = _.merge({}, opts, this.opts); // Allow options passed to constructor to be used
+    this.opts = _.merge({}, this.opts, opts);
     return this;
   }
 
@@ -126,6 +137,7 @@ export default class Grid {
    * @private
    */
   _buildGrid () {
+    console.info('Abstract _buildGrid');
     return this;
   }
 

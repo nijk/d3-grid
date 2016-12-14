@@ -1,9 +1,9 @@
 {
   "name": "d3-grid",
   "version": "0.0.1",
-  "private": true,
   "main": "index.js",
   "scripts": {
+    "prepublish": "babel --plugins 'transform-es2015-modules-umd' src --ignore __tests__ --out-dir ./dist",
     "start": "webpack-dev-server --host 0.0.0.0 --port 3000 --progress --colors --display-error-details --hot --config webpack.config.js",
     "deploy": "NODE_ENV=production webpack -p --config webpack.production.config.js && webpack --config webpack.server.config.js",
     "test": "babel-node tests/run.js"
@@ -12,22 +12,21 @@
     "type": "git",
     "url": "git+https://github.com/nijk/d3-grid.git"
   },
+  "keywords": [
+    "D3",
+    "Grid",
+    "Canvas",
+    "SVG"
+  ],
   "author": "Nick Aspinall",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/nijk/d3-grid/issues"
   },
   "dependencies": {
-    "classnames": "^2.2.5",
-    "d3": "^4.2.3",
-    "d3-selection": "^4.2.3",
-    "d3-scale-chromatic": "^1.0.2",
-    "d3-selection-multi": "^1.0.0",
-    "lodash": "^4.15.0"
   },
   "devDependencies": {
     "autoprefixer": "^6.4.1",
-    "babel": "^6.5.2",
     "babel-cli": "^6.14.0",
     "babel-core": "^6.14.0",
     "babel-eslint": "^6.1.2",
@@ -35,13 +34,12 @@
     "babel-plugin-syntax-object-rest-spread": "^6.13.0",
     "babel-plugin-transform-object-rest-spread": "^6.8.0",
     "babel-preset-es2015": "^6.14.0",
-    "babel-preset-stage-0": "^6.5.0",
     "babel-preset-stage-3": "^6.11.0",
     "body-parser": "^1.15.2",
     "css-loader": "^0.24.0",
     "eslint": "^3.4.0",
+    "eslint-plugin-babel": "^3.3.0",
     "eslint-loader": "^1.5.0",
-    "eslint-plugin-react": "^6.2.2",
     "extract-text-webpack-plugin": "^1.0.1",
     "html-webpack-plugin": "^2.22.0",
     "jasmine": "^2.5.2",
@@ -52,5 +50,13 @@
     "style-loader": "^0.13.1",
     "webpack": "^1.13.2",
     "webpack-dev-server": "^1.15.1"
+  },
+  "peerDependencies": {
+    "classnames": "^2.2.5",
+    "d3": "^4.2.3",
+    "d3-selection": "^4.2.3",
+    "d3-scale-chromatic": "^1.0.2",
+    "d3-selection-multi": "^1.0.0",
+    "lodash": "^4.15.0"
   }
 }

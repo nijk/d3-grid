@@ -43,7 +43,6 @@ export default class GridCanvas extends Grid {
   _buildGrid () {
     const { width, height, classes } = this.opts;
     const context = this.getContext(this.$grid);
-    console.info('build', this.opts);
 
     this.$grid
       .attr('class', classnames(classes.grid))

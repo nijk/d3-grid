@@ -63,8 +63,6 @@ export default class GridSvg extends Grid {
 
     this.$container = this.$grid.append('g');
 
-    //this.$container = this.$grid.select('g');
-
     this.$container.attr('class', classnames(classes.container))
       .attr('width', width)
       .attr('height', height);
@@ -78,19 +76,28 @@ export default class GridSvg extends Grid {
   _buildContents () {
     const { shape, data, cellSize } = this.opts;
 
+    const calcX = this.calculateCellX.bind(this, this.cellOffset.x);
+    const calcY = this.calculateCellY.bind(this, this.cellOffset.y);
+
     switch (shape) {
       case 'circle':
-        const endAngle = 2 * Math.PI;
         const radius = cellSize[0] / 2;
 
-        // Make circles
+        this.$container.selectAll('circle')
+          .data(data)
+          .enter().append('circle')
+          .attr('cx', calcX)
+          .attr('cy', calcY)
+          .attr('r', radius)
+          .style("fill", random.colour);
+
         break;
       default:
         this.$container.selectAll('rect')
           .data(data)
           .enter().append('rect')
-          .attr('x', this.calculateCellX.bind(this, this.cellOffset.x))
-          .attr('y', this.calculateCellY.bind(this, this.cellOffset.y))
+          .attr('x', calcX)
+          .attr('y', calcY)
           .attr('width', cellSize[0])
           .attr('height', cellSize[1])
           .style("fill", random.colour);
