@@ -20,8 +20,7 @@ export default class GridCanvas extends Grid {
    */
   setDOM () {
     const selector = this.opts.selector || 'body';
-    this.$parent = document.querySelector(selector);
-    this.$grid = d3.select(selector).append('canvas');
+    this.$grid = this.$rootNode ? d3.select(this.$rootNode).append('canvas') : d3.select(selector).append('canvas');
 
     return this;
   }
@@ -63,15 +62,26 @@ export default class GridCanvas extends Grid {
     const { data, cellSize } = this.opts;
     this.$container = d3.select(document.createElement('grid'));
 
+    const calcX = this.calculateCellX.bind(this, this.cellOffset.x);
+    const calcY = this.calculateCellY.bind(this, this.cellOffset.y);
+
+    this.$container.selectAll('cell')
+      .data(data)
+      .attr('x', calcX)
+      .attr('y', calcY)
+      .attr('width', cellSize[0])
+      .attr('height', cellSize[1])
+      .attr('fillStyle', (d) => d.colour);
+
     this.$container.selectAll('grid')
       .data(data)
       .enter()
       .append('cell')
-      .attr('x', this.calculateCellX.bind(this, this.cellOffset.x))
-      .attr('y', this.calculateCellY.bind(this, this.cellOffset.y))
+      .attr('x', calcX)
+      .attr('y', calcY)
       .attr('width', cellSize[0])
       .attr('height', cellSize[1])
-      .attr('fillStyle', random.colour);
+      .attr('fillStyle', (d) => d.colour);
 
     return this;
   }

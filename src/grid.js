@@ -13,29 +13,35 @@ import CalculateGrid from './calculateGrid';
  * Abstract class: Grid
  */
 export default class Grid {
-  constructor (opts) {
+  constructor (opts = {}, $rootNode = null) {
     // Properties
     this.opts = opts;
     this.$container = null;
     this.$grid = null;
-    this.$parent = null;
+    this.$rootNode = $rootNode;
     this.cellOffset = {
       x: 0,
       y: 0
     };
 
-    const calculateGrid = new CalculateGrid(window);
+    this.calculateGrid = new CalculateGrid(window);
 
     // Calculate Grid, set appropriate classes and build the Canvas Grid
     return this.setDOM()
-      .setOpts(calculateGrid.calculate(this.$parent, this.opts))
+      .setOpts(this.calculateGrid.calculate(this.$rootNode, this.opts))
       .setClasses()
       .calculateCellOffset()
       .build();
   }
 
-  resize () {
-    this.setOpts(calculateGrid.calculate(this.$parent, this.opts))
+  resize ($rootNode, opts, force) {
+    this.opts = opts;
+    this.$rootNode = $rootNode;
+
+    // Set the grid to take up no space, allowing the grid calculations to be made properly.
+    this.$grid.attr('width', 0).attr('height', 0);
+
+    this.setOpts(this.calculateGrid.calculate(this.$rootNode, this.opts, force))
       .setClasses()
       .calculateCellOffset()
       .build();

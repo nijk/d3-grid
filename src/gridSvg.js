@@ -20,7 +20,7 @@ export default class GridSvg extends Grid {
    */
   setDOM () {
     const selector = this.opts.selector || 'body';
-    this.$parent = document.querySelector(selector);
+    this.$parent = this.$parent || document.querySelector(selector);
     this.$grid = d3.select(selector).append('svg');
 
     return this;

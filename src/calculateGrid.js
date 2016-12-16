@@ -5,15 +5,16 @@ import _ from 'lodash';
 export default class CalculateGrid {
   constructor (window = window) {
     this.window = window;
-    
+
     this.defaults = {
       width: 100,
       height: 100,
       cellSize: [8, 8, 2],
+      minCellSize: [4, 4, 1],
       cells: 100,
-      scale: false,      
+      scale: false,
     };
-    
+
     this.$el = null;
     this.opts = {};
 
@@ -92,13 +93,33 @@ export default class CalculateGrid {
     return this.setOpts({ cells, width, height, grid, cellSize });
   }
 
+  recalculateCellSize () {
+    let { cells, width, height, cellSize, minCellSize } = this.opts;
+    let cell, gutter;
+
+    const pixels = width * height;
+    const totalCell = Math.floor(Math.sqrt(pixels / cells));
+
+    if (totalCell > (minCellSize[0] + minCellSize[2])) {
+      gutter = Math.floor(_.clamp((totalCell * 0.2), minCellSize[2], cellSize[2]));
+      cell = Math.floor(_.clamp((totalCell - gutter), minCellSize[0], cellSize[0]));
+    } else {
+      gutter = minCellSize[2];
+      cell = minCellSize[0];
+    }
+
+    return this.setOpts({
+      cellSize: [cell, cell, gutter]
+    });
+  }
+
   /**
    * Calculate all props
    * @param $el
    * @param opts
    * @returns {*}
    */
-  calculate ($el, opts) {
+  calculate ($el, opts, force = false) {
     // Set properties
     this.$el = $el;
     this.opts = _.merge({}, this.defaults, opts);
@@ -107,18 +128,27 @@ export default class CalculateGrid {
     this.setSize();
 
     // Set columns & rows
-    if (!this.opts.grid || this.opts.grid && this.opts.grid.length !== 2) {
+    if (force || !this.opts.grid || (this.opts.grid && this.opts.grid.length !== 2)) {
       this.setGrid();
     }
 
     // Set cellSize
-    if (!this.opts.cellSize || this.opts.cellSize && this.opts.cellSize.length !== 3) {
+    if (!this.opts.cellSize || (this.opts.cellSize && this.opts.cellSize.length !== 3)) {
       this.setCell();
     }
 
-    this.setOpts({
-      data: _.range(0, this.opts.cells, 0),
-    });
+    // Recalculate cellSize
+    if (this.opts.grid[0] * this.opts.grid[1] < this.opts.cells) {
+      this.recalculateCellSize();
+      this.setGrid();
+    }
+
+
+    if (!this.opts.data) {
+      this.setOpts({
+        data: _.range(0, this.opts.cells, 0),
+      });
+    }
 
     return this.opts;
   }
